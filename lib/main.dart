@@ -42,6 +42,7 @@ class _NameInputScreenState extends State<NameInputScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Texto para inserir o nome do jogador
             Text(
               "Insira seu nome",
               style: TextStyle(
@@ -90,6 +91,7 @@ class PongScreen extends StatefulWidget {
 }
 
 class _PongScreenState extends State<PongScreen> {
+  // Variáveis de posição e velocidade da bola
   late double ballX = 0.0;
   late double ballY = 0.0;
   double ballXDirection = 1;
@@ -119,6 +121,7 @@ class _PongScreenState extends State<PongScreen> {
     super.dispose();
   }
 
+  // Movimentação do bastão do jogador com as setas do teclado
   void _handleKeyEvent(RawKeyEvent event) {
     if (event is RawKeyDownEvent) {
       setState(() {
@@ -150,17 +153,18 @@ class _PongScreenState extends State<PongScreen> {
     }
   }
 
+  // Atualiza a posição da bola
   void updateBallPosition() {
     setState(() {
       ballX += ballSpeed * ballXDirection;
       ballY += ballSpeed * ballYDirection;
 
-      // Detect collision with walls
+      // Detecta colisão com as paredes
       if (ballX <= -1 || ballX >= 1) {
         ballXDirection *= -1;
       }
 
-      // Detect collision with player's bat
+      // Detecta colisão com o bastão do jogador
       final double batHalfWidth = batWidth / MediaQuery.of(context).size.width;
       if (ballY >= 0.9 &&
           ballY <= 0.95 &&
@@ -168,20 +172,20 @@ class _PongScreenState extends State<PongScreen> {
           ballX <= playerBatPosition + batHalfWidth &&
           ballYDirection > 0) {
         ballYDirection *= -1;
-        ballY = 0.89; // Ensure ball bounces just above the bat
+        ballY = 0.89;
       }
 
-      // Detect collision with opponent's bat
+      // Detecta colisão com o bastão do oponente
       if (ballY <= -0.9 &&
           ballY >= -0.95 &&
           ballX >= opponentBatPosition - batHalfWidth &&
           ballX <= opponentBatPosition + batHalfWidth &&
           ballYDirection < 0) {
         ballYDirection *= -1;
-        ballY = -0.89; // Ensure ball bounces just below the bat
+        ballY = -0.89;
       }
 
-      // Detect collision with obstacles
+      // Detecta colisão com obstáculos
       obstacles.removeWhere((obstacle) {
         if ((ballX - obstacle.dx).abs() < 0.05 &&
             (ballY - obstacle.dy).abs() < 0.05) {
@@ -192,7 +196,7 @@ class _PongScreenState extends State<PongScreen> {
         return false;
       });
 
-      // Update score if ball passes beyond the player's or opponent's bat
+      // Atualiza a pontuação
       if (ballY >= 1) {
         opponentScore++;
         checkDifficulty();
@@ -205,10 +209,11 @@ class _PongScreenState extends State<PongScreen> {
     });
   }
 
+  // Atualiza a posição do bastão do oponente
   void updateOpponentPosition() {
     setState(() {
       if (opponentBatPosition < ballX) {
-        opponentBatPosition += 0.03; // Adjust speed for smooth movement
+        opponentBatPosition += 0.03;
       } else if (opponentBatPosition > ballX) {
         opponentBatPosition -= 0.03;
       }
@@ -226,13 +231,14 @@ class _PongScreenState extends State<PongScreen> {
   }
 
   void checkDifficulty() {
-    // Increase speed and generate obstacles every 3 points
+    // Aumenta a velocidade e gera obstáculos a cada 3 pontos
     if ((playerScore + opponentScore) % 3 == 0) {
-      ballSpeed += 0.005; // Accelerate ball
+      ballSpeed += 0.005;
       generateObstacles();
     }
   }
 
+  // Gera novos obstáculos
   void generateObstacles() {
     obstacles = List.generate(5, (index) {
       double x = random.nextDouble() * 2 - 1;
@@ -251,7 +257,7 @@ class _PongScreenState extends State<PongScreen> {
       backgroundColor: Colors.black,
       body: Column(
         children: [
-          // Score Display
+          // Exibição da pontuação
           Container(
             padding: EdgeInsets.symmetric(vertical: 20),
             child: Text(
@@ -274,7 +280,7 @@ class _PongScreenState extends State<PongScreen> {
               ),
               child: Stack(
                 children: [
-                  // Ball
+                  // Bola
                   Align(
                     alignment: Alignment(ballX, ballY),
                     child: Container(
@@ -287,7 +293,7 @@ class _PongScreenState extends State<PongScreen> {
                     ),
                   ),
 
-                  // Obstacles
+                  // Obstáculos
                   ...obstacles.map((obstacle) => Align(
                         alignment: Alignment(obstacle.dx, obstacle.dy),
                         child: Container(
@@ -297,7 +303,7 @@ class _PongScreenState extends State<PongScreen> {
                         ),
                       )),
 
-                  // Player's Bat
+                  // Bastão do jogador
                   Align(
                     alignment: Alignment(playerBatPosition, 0.95),
                     child: Container(
@@ -307,7 +313,7 @@ class _PongScreenState extends State<PongScreen> {
                     ),
                   ),
 
-                  // Opponent's Bat
+                  // Bastão do oponente
                   Align(
                     alignment: Alignment(opponentBatPosition, -0.95),
                     child: Container(
@@ -317,7 +323,7 @@ class _PongScreenState extends State<PongScreen> {
                     ),
                   ),
 
-                  // Start and Pause Buttons
+                  // Botões de início e pausa
                   Align(
                     alignment: Alignment(0, 0.8),
                     child: Row(
